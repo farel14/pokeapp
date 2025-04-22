@@ -16,8 +16,8 @@ export const typeColors: Record<string, string> = {
     dark: "#8f7b6b",
     steel: "#a0b0c7",
     fairy: "#f2a9d1",
-  };
-
+    normal: "#a8a77a",
+};
 
 export const typeColorsLighter: Record<string, string> = {
     fire: "#fc7e7f",
@@ -37,6 +37,7 @@ export const typeColorsLighter: Record<string, string> = {
     dark: "#a28c7d",
     steel: "#b3c2d4",
     fairy: "#f5b8de",
+    normal: "#c6c6a3",
 };
 
 export const typeColorsDarker: Record<string, string> = {
@@ -57,4 +58,5 @@ export const typeColorsDarker: Record<string, string> = {
     dark: "#7d6b5e",
     steel: "#9aa3b8",
     fairy: "#f09dc6",
+    normal: "#8a8a6a",
 };

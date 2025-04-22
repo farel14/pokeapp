@@ -1,5 +1,7 @@
 import { typeColors, typeColorsLighter, typeColorsDarker } from "@/lib/typeColors";
 import fs from 'fs';
+import PokeballIcon from "@/components/PokeballIcon";
+
 
 type Props = {
     name: string;
@@ -32,15 +34,22 @@ const PokemonCard = async ({ name }: Props) => {
             style={{ backgroundColor: color }}
             className="text-white rounded-xl p-4 shadow-md hover:shadow-lg transition"
         >
-            <div style={{ color: colorDarker }}>{formattedId}</div>
+            <div className="text-right" style={{ color: colorDarker }}>{formattedId}</div>
             <h2 className="text-left capitalize font-semibold mt-2">{name}</h2>
-            <div style={{ backgroundColor: colorLighter }} className="rounded-full capitalize">{pokemonType}</div>
-            <div style={{ backgroundColor: colorLighter }} className="rounded-full capitalize">{pokemonTypeSecondary}</div>
-            <img
-            src={data.sprites.other?.['official-artwork']?.front_default || data.sprites.front_default}
-            alt={name}
-            className="w-20 h-20 mx-auto"
-            />
+            <div className="flex gap-2 mt-2 ">
+                <div className="flex flex-1 flex-col gap-2">
+                    <div style={{ backgroundColor: colorLighter }} className="rounded-full capitalize text-center w-min px-4 py-2">{pokemonType}</div>
+                    {pokemonTypeSecondary ? <div style={{ backgroundColor: colorLighter }} className="rounded-full capitalize text-center w-min px-4 py-2">{pokemonTypeSecondary}</div> : null}
+                </div>
+                <div className="relative gap-2 mt-2 ">
+                    <PokeballIcon className="w-40 h-40" style={{ fill: colorLighter }} />
+                    <img
+                        src={data.sprites.other?.['official-artwork']?.front_default || data.sprites.front_default}
+                        alt={name}
+                        className="absolute top-0 left-0 w-full h-full object-cover rounded-xl"
+                    />
+                </div>
+            </div>
         </div>
     );
 };
