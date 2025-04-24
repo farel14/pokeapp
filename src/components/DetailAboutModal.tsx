@@ -1,4 +1,5 @@
 'use client'
+import { pokeApiCall } from "@/lib/api";
 import { mmToFeetDecimalInches } from "@/lib/utils";
 import { EggGroup, General, Species } from "@/types";
 import convert from "convert-units";
@@ -30,10 +31,10 @@ const DetailAboutModal = ({ generalData, speciesData }: DetailAboutModalProps) =
     useEffect(() => {
         (async () => {
             const eggGroup = pokemonEggGroups[0]?.name;
-            const eggCycle = pokemonEggGroups[1]?.name;
+            const eggCycle = pokemonEggGroups[1]?.name || eggGroup;
             const [eggGroupsRes, eggCycleRes] = await Promise.allSettled([
-                fetch(`https://pokeapi.co/api/v2/egg-group/${eggGroup}`),
-                fetch(`https://pokeapi.co/api/v2/egg-group/${eggCycle}`),
+                pokeApiCall(`egg-group/${eggGroup}`),
+                pokeApiCall(`egg-group/${eggCycle}`),
             ])
 
             if (eggGroupsRes.status !== "fulfilled") {

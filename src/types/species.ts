@@ -12,4 +12,7 @@ export interface Species {
         name: string
         url: string
     }[]
+    evolution_chain: {
+        url: string
+    }
 };

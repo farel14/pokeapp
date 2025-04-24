@@ -33,7 +33,7 @@ const PokemonCard = ({ name }: any) => {
             className="cursor-pointer text-white rounded-xl p-4 shadow-md hover:shadow-lg transition z-20"
             onClick={() => router.push(`/pokemon/${name}`)}
         >
-            <div className="text-right" style={{ color: colorDarker }}>{formattedId}</div>
+            <div className="text-right text-lg font-bold" style={{ color: colorDarker }}>{formattedId}</div>
             <h2 className="text-left capitalize font-semibold mt-2">{name}</h2>
             <div className="flex gap-2 mt-2 ">
                 <div className="flex flex-1 flex-col gap-2">
@@ -41,7 +41,7 @@ const PokemonCard = ({ name }: any) => {
                     {pokemonTypeSecondary ? <div style={{ backgroundColor: colorLighter }} className="rounded-full capitalize text-center w-min px-4 py-2">{pokemonTypeSecondary}</div> : null}
                 </div>
                 <div className="relative gap-2 mt-2 ">
-                    <PokeballIcon className="w-40 h-40" style={{ fill: colorLighter }} />
+                    <PokeballIcon className="size-40" style={{ fill: colorLighter }} />
                     <img
                         src={pokemonData.sprites.other?.['official-artwork']?.front_default || pokemonData.sprites.front_default}
                         alt={name}

@@ -7,13 +7,6 @@ interface DetailBaseStatsModalProps {
     stats: General["stats"];
     name: string;
 } // Explicitly defining the properties
-//  {
-
-//     stats: General["stats"];
-//     nam
-
-// }
-
 
 const DetailBaseStatsModal = ({ name, stats }: DetailBaseStatsModalProps) => {
     const [stat, setStat] = useState<Record<string, number>>({
@@ -25,23 +18,53 @@ const DetailBaseStatsModal = ({ name, stats }: DetailBaseStatsModalProps) => {
         speed: 0,
         total: 0,
     });
+    const [statPercent, setStatPercent] = useState<Record<string, number>>({
+        hp: 0,
+        attack: 0,
+        defense: 0,
+        ['special-attack']: 0,
+        ['special-defense']: 0,
+        speed: 0,
+    });
+    const [statColor, setStatColor] = useState<Record<string, string>>({
+        hp: '',
+        attack: '',
+        defense: '',
+        ['special-attack']: '',
+        ['special-defense']: '',
+        speed: '',
+    });
 
     useEffect(() => {
+        const maxStat = Math.max(...stats.map(stat => stat.base_stat));
+        const newStat: Record<string, number> = { hp: 0, attack: 0, defense: 0, ['special-attack']: 0, ['special-defense']: 0, speed: 0, total: 0 };
+        const newStatPercent: Record<string, number> = { hp: 0, attack: 0, defense: 0, ['special-attack']: 0, ['special-defense']: 0, speed: 0 };
+        const newStatColor: Record<string, string> = { hp: '', attack: '', defense: '', ['special-attack']: '', ['special-defense']: '', speed: '' };
+
         stats.forEach((stat) => {
-            const statName = stat.stat.name
-            const statValue = stat.base_stat
-            setStat((prev) => ({
-                ...prev,
-                [statName]: statValue,
-                total: prev.total + statValue
-            }))
-        })
-    }, [])
+            const statName = stat.stat.name;
+            const statValue = stat.base_stat;
+            newStat[statName] = statValue;
+            newStat.total += statValue;
+            newStatPercent[statName] = (statValue / maxStat) * 90;
+            newStatColor[statName] = statValue >= (0.7 * maxStat) ? 'bg-green-400' : 'bg-red-400';
+        });
+
+        newStatPercent.total = 100;
+        newStatColor.total = 'bg-yellow-400';
+
+        // Set the state with the calculated values
+        setStat(newStat);
+        setStatPercent(newStatPercent);
+        setStatColor(newStatColor);
+    }, [stats]);
+
+    if (!stat) return <p className="text-gray-500 load">Loading...</p>;
 
 
     return (
         <div>
-            <div className="flex gap-4 p-4 text-gray-500">
+            <div className="flex gap-4 p-4 text-gray-500 w-full">
                 <div className="flex flex-col gap-2 w-30">
                     <div>
                         HP
@@ -74,33 +97,17 @@ const DetailBaseStatsModal = ({ name, stats }: DetailBaseStatsModalProps) => {
                     <div>{stat.speed}</div>
                     <div>{stat.total}</div>
                 </div>
-                <div className="flex flex-col gap-2 text-black">
-                    <div className="flex flex-col gap-2 w-100 bg-gray-200 rounded-full h-full my-2">
-                        <div className="bg-green-400 h-full rounded-full" style={{ width: '60%' }} />
-                    </div>
-                    <div className="flex flex-col gap-2 w-100 bg-gray-200 rounded-full h-full my-2">
-                        <div className="bg-green-400 h-full rounded-full" style={{ width: '60%' }} />
-                    </div>
-                    <div className="flex flex-col gap-2 w-100 bg-gray-200 rounded-full h-full my-2">
-                        <div className="bg-green-400 h-full rounded-full" style={{ width: '60%' }} />
-                    </div>
-                    <div className="flex flex-col gap-2 w-100 bg-gray-200 rounded-full h-full my-2">
-                        <div className="bg-green-400 h-full rounded-full" style={{ width: '60%' }} />
-                    </div>
-                    <div className="flex flex-col gap-2 w-100 bg-gray-200 rounded-full h-full my-2">
-                        <div className="bg-green-400 h-full rounded-full" style={{ width: '60%' }} />
-                    </div>
-                    <div className="flex flex-col gap-2 w-100 bg-gray-200 rounded-full h-full my-2">
-                        <div className="bg-green-400 h-full rounded-full" style={{ width: '60%' }} />
-                    </div>
-                    <div className="flex flex-col gap-2 w-100 bg-gray-200 rounded-full h-full my-2">
-                        <div className="bg-green-400 h-full rounded-full" style={{ width: '60%' }} />
-                    </div>
+
+                <div className="flex flex-col gap-2 text-black w-full">
+                    {
+                        Object.entries(stat).map(([key, value]) => (
+                            <div key={key} className={`flex flex-col w-full gap-2 w-100 bg-gray-200 rounded-full h-full my-2`}>
+                                <div className={`${statColor[key]} h-full rounded-full`} style={{ width: `${Math.floor(statPercent[key]) > 100 ? 100 : Math.floor(statPercent[key])}%` }} />
+                            </div>
+                        ))
+                    }
                 </div>
             </div>
-            <h1 className="flex font-bold text-black px-4">Type defenses</h1>
-            <h3 className="text-gray-400 px-4">The effectiveness of each type on <span className="capitalize">{name}</span>.</h3>
-
         </div>
     )
 }

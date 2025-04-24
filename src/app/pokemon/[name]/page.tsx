@@ -7,9 +7,12 @@ import { General, GeneralSprites, Species } from "@/types";
 import BackgroundIcon from "@/components/BackgroundIcon";
 import { pokeApiCall } from "@/lib/api";
 import DetailBaseStatsModal from "@/components/DetailBaseStatsModal";
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import DetailAboutModal from "@/components/DetailAboutModal";
 import { useRouter } from "next/navigation";
+import DetailEvolutionModal from "@/components/DetailEvolutionModal";
+import DetailTypeModal from "@/components/DetailTypeModal";
+import DetailMovesModal from "@/components/DetailMovesModal";
 
 
 type ActiveTabType = 'about' | 'stats' | 'evolution' | 'moves';
@@ -34,10 +37,12 @@ const PokemonPage = ({ params }: { params: Promise<{ name: string }> }) => {
   const [pokemonTypeSecondary, setPokemonTypeSecondary] = useState("");
   const [color, setColor] = useState("");
   const [colorLighter, setColorLighter] = useState("");
+  const [colorDarker, setColorDarker] = useState("");
   const [formattedId, setFormattedId] = useState("");
   const [pokemonSprites, setPokemonSprites] = useState<GeneralSprites | null>(null);
   const [generalData, setGeneralData] = useState<General | null>(null);
   const [speciesData, setSpeciesData] = useState<Species | null>(null);
+  const [evolutionChainId, setEvolutionChainId] = useState<string | null>(null);
 
   useEffect(() => {
 
@@ -73,7 +78,9 @@ const PokemonPage = ({ params }: { params: Promise<{ name: string }> }) => {
       setPokemonTypeSecondary(pokemonTypes[1]?.type.name);
       setColor(typeColors[pokemonTypes[0].type.name] || "#fff"); // Fallback color if type is not found
       setColorLighter(typeColorsLighter[pokemonTypes[0].type.name] || "#fff"); // Fallback color if type is not found
+      setColorDarker(typeColorsDarker[pokemonTypes[0].type.name] || "#fff"); // Fallback color if type is not found
       setPokemonSprites(pokemonSprites)
+      setEvolutionChainId(speciesJson.evolution_chain?.url.split('/').slice(-2)[0] || null);
     })();
 
 
@@ -86,11 +93,16 @@ const PokemonPage = ({ params }: { params: Promise<{ name: string }> }) => {
       case 'about':
         return <DetailAboutModal generalData={generalData} speciesData={speciesData} />;
       case 'stats':
-        return <DetailBaseStatsModal name={name} stats={generalData.stats} />;
-      // case 'moves':
-      //   return <MovesContent />;
-      // case 'evolution':
-      //   return <MovesContent />;
+        return (
+          <div>
+            <DetailBaseStatsModal name={name} stats={generalData.stats} />
+            <DetailTypeModal name={name} generalData={generalData} />
+          </div>
+        );
+      case 'evolution':
+        return <DetailEvolutionModal name={name} evolutionChainId={evolutionChainId as string} color={{color, colorDarker, colorLighter}} />;
+      case 'moves':
+        return <DetailMovesModal name={name} generalData={generalData} />;
       default:
         return <div>Unknown tab</div>;
     }
@@ -103,20 +115,20 @@ const PokemonPage = ({ params }: { params: Promise<{ name: string }> }) => {
     :
     <div
       style={{ backgroundColor: color }}
-      className="grid text-white p shadow-md hover:shadow-lg transition h-screen"
+      className="grid text-white p shadow-md hover:shadow-lg transition h-screen md:text-lg"
     >
       <div className="container mx-auto px-4 font-bold py-0 my-0">
         <div className="flex justify-between mx-auto py-4">
-          <FaArrowLeftLong className="cursor-pointer" onClick={() => router.back()} />
-          <FaRegHeart />
+          <FaArrowLeftLong className="cursor-pointer md:size-8" onClick={() => router.back()} />
+          <FaRegHeart className="cursor-pointer md:size-8" />
         </div>
         <div className="flex justify-between">
-          <h2 className="text-left capitalize font-bold text-2xl">{name}</h2>
-          <div className="mt-4 text-sm font-bold">{formattedId}</div>
+          <h2 className="text-left capitalize font-bold text-2xl md:text-4xl">{name}</h2>
+          <div className="mt-4 text-sm font-bold md:text-2xl">{formattedId}</div>
         </div>
         <div className="flex gap-2 mt-2 text-xs font-bold">
           <div className="flex flex-1 gap-2">
-            <div style={{ backgroundColor: colorLighter }} className="rounded-full capitalize text-center w-min h-min px-5 py-1">{pokemonType}</div>
+            <div style={{ backgroundColor: colorLighter }} className="rounded-full capitalize text-center w-min h-min px-5 py-1 md:text-lg">{pokemonType}</div>
             {pokemonTypeSecondary ? <div style={{ backgroundColor: colorLighter }} className="rounded-full capitalize text-center w-min h-min px-5 py-1">{pokemonTypeSecondary}</div> : null}
           </div>
 
@@ -125,18 +137,18 @@ const PokemonPage = ({ params }: { params: Promise<{ name: string }> }) => {
           <img
             src={pokemonSprites?.other?.['official-artwork']?.front_default || pokemonSprites?.front_default}
             alt={name}
-            className="z-20 top-0 size-50 object-cover md:size-100"
+            className="z-20 top-0 size-70 object-cover md:size-100"
           />
           <PokeballIcon className="z-0 size-50 ml-60 -mt-50 md:size-100 md:-mt-100" style={{ fill: colorLighter }} />
           <BackgroundIcon className="z-0 size-50 mr-20 -mt-50 md:size-100 md:-mt-80" style={{ fill: colorLighter }} />
         </div>
 
       </div>
-      <div className="modal rounded-tl-xl rounded-tr-xl bg-white py-6 px-2 -mt-10 md:-mt-30 z-10">
+      <div className="modal rounded-tl-xl rounded-tr-xl bg-white py-6 px-2 -mt-10 md:-mt-30 md:px-8 z-10">
         <div className="nav flex justify-between items-center p-4 text-gray-400">
           {
             tabs.map((tab) => (
-              <div key={tab} className={`flex-1 cursor-pointer text-center border-b-2 p-2 ${activeTab === tab ? 'font-bold border-blue-700 text-black} p-2' : 'border-gray-200'}`} onClick={() => setActiveTab(tab)} role="tab">{tabsNameMapper[tab]}</div>
+              <div key={tab} className={`flex-1 cursor-pointer text-center border-b-2 p-2 ${activeTab === tab ? 'font-bold border-blue-700 text-black p-2' : 'border-gray-200'}`} onClick={() => setActiveTab(tab)} role="tab">{tabsNameMapper[tab]}</div>
             ))
           }
         </div>
