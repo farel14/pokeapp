@@ -6,33 +6,81 @@ import { pokeApiCallWithPage } from "@/lib/api";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PokemonResponse } from "@/types";
+import InfiniteScroll from "react-infinite-scroll-component";
+import PokeballIcon from "@/components/PokeballIcon";
 
-const HomePage = () =>  {
-  const [pokemons, setPokemons] = useState<PokemonResponse[] | null>(null);
+const HomePage = () => {
   const router = useRouter();
-  useEffect(() => {
-    (async () => {
-      const pokemonsRes = await pokeApiCallWithPage('pokemon');
-      const pokemonsJson = await pokemonsRes.json();
 
-      setPokemons(pokemonsJson.results);
-    })();
-    }, []);
+  const [pokemons, setPokemons] = useState<PokemonResponse[] | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);
+
+
+  const loadMorePokemons = async () => {
+    const pokemonsRes = await pokeApiCallWithPage('pokemon', 20, page*20);
+    const pokemonsJson = await pokemonsRes.json();
+
+    if (!pokemonsJson.next || pokemonsJson.results.length === 0) {
+      setHasMore(false);
+      return;
+    }
+
+    setPokemons((prev) => [...(prev || []), ...pokemonsJson.results]);
+    setPage((prev) => prev + 1);
+  }
+
+
+  useEffect(() => {
+    loadMorePokemons();
+  }, []);
 
   return (
-
     // home page react
     <main className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-6">
+      {/* <div className="flex justify-between items-center mb-6">
         <FaArrowLeftLong className="text-2xl cursor-pointer" onClick={() => router.back()} />
-        <TfiMenuAlt className="text-2xl" />
+        <div className="grid place-items-center mt-30">
+          <TfiMenuAlt className="z-10 text-2xl" />
+          <PokeballIcon className="z-0 -mt-28 size-50 fill-gray-100"/>
+        </div>
+      </div> */}
+      {/* <div className="flex justify-between z-20 h-24">
+        <FaArrowLeftLong className="my-auto flex items-center text-2xl cursor-pointer" onClick={() => router.back()} />
+        <div className="relative items-center"> 
+          <PokeballIcon className="absolute inset-0 z-10 size-40 fill-gray-100"/>
+          <TfiMenuAlt className="absolute inset-0 z-30 text-2xl" />
+        </div>
+      </div> */}
+      <div className="flex justify-between items-center z-20 h-20">
+        <FaArrowLeftLong
+          className="text-2xl cursor-pointer"
+          onClick={() => router.back()}
+        />
+        
+        <div className="relative w-56 h-56 flex items-center justify-center"> 
+          <PokeballIcon className="absolute inset-0 z-10 ml-15 -mt-10 w-80 h-80 fill-gray-100" />
+          <TfiMenuAlt className="z-30 text-3xl ml-50" />
+        </div>
       </div>
+
+
       <h1 className="text-3xl font-bold mb-6">Pokedex</h1>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {pokemons && pokemons.map((pokemon) => (
-          <PokemonCard key={pokemon.name} name={pokemon.name}/>
-        ))}
-      </div>
+      {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4"> */}
+        <InfiniteScroll
+          dataLength={pokemons ? pokemons.length : 0}
+          next={loadMorePokemons}
+          hasMore={hasMore}
+          loader={<div className="loader"></div>}
+          endMessage={<p className="text-center">No more pokemons</p>}
+          className="grid grid-cols-2 md:grid-cols-4 gap-4"
+        >
+          {pokemons && pokemons.map((pokemon) => (
+            <PokemonCard className="" key={pokemon.name} name={pokemon.name} />
+          ))}
+        </InfiniteScroll>
+
+      {/* </div> */}
     </main>
   );
 }

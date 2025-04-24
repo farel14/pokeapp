@@ -11,6 +11,7 @@ import { use, useEffect, useState } from "react";
 import DetailAboutModal from "@/components/DetailAboutModal";
 import { useRouter } from "next/navigation";
 
+
 type ActiveTabType = 'about' | 'stats' | 'evolution' | 'moves';
 const tabs: ActiveTabType[] = ['about', 'stats', 'evolution', 'moves'];
 
@@ -23,7 +24,7 @@ const tabsNameMapper: Record<ActiveTabType, string> = {
 };
 
 const PokemonPage = ({ params }: { params: Promise<{ name: string }> }) => {
-  const { name } = use(params);
+  const { name } = use(params); // Unwrap the params Promise
   const router = useRouter();
 
 
@@ -120,18 +121,18 @@ const PokemonPage = ({ params }: { params: Promise<{ name: string }> }) => {
           </div>
 
         </div>
-        <div className="grid place-items-center mt-30">
+        <div className="grid place-items-center mt-30 md:mt-0">
           <img
             src={pokemonSprites?.other?.['official-artwork']?.front_default || pokemonSprites?.front_default}
             alt={name}
-            className="z-20 top-0 size-50 object-cover"
+            className="z-20 top-0 size-50 object-cover md:size-100"
           />
-          <PokeballIcon className="z-0 size-50 ml-60 -mt-50" style={{ fill: colorLighter }} />
-          <BackgroundIcon className="z-0 size-50 mr-20 -mt-50" style={{ fill: colorLighter }} />
+          <PokeballIcon className="z-0 size-50 ml-60 -mt-50 md:size-100 md:-mt-100" style={{ fill: colorLighter }} />
+          <BackgroundIcon className="z-0 size-50 mr-20 -mt-50 md:size-100 md:-mt-80" style={{ fill: colorLighter }} />
         </div>
 
       </div>
-      <div className="modal rounded-tl-xl rounded-tr-xl bg-white py-6 px-2 -mt-10 z-10">
+      <div className="modal rounded-tl-xl rounded-tr-xl bg-white py-6 px-2 -mt-10 md:-mt-30 z-10">
         <div className="nav flex justify-between items-center p-4 text-gray-400">
           {
             tabs.map((tab) => (

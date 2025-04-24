@@ -13,7 +13,6 @@ const PokemonCard = ({ name }: any) => {
         (async () => {
             const res = await pokeApiCall(`pokemon/${name}`);
             const data = await res.json();
-            console.log('data', data);
             setPokemonData(data);
         })();
     }, [name]);
@@ -31,7 +30,7 @@ const PokemonCard = ({ name }: any) => {
     return (
         <div
             style={{ backgroundColor: color }}
-            className="cursor-pointer text-white rounded-xl p-4 shadow-md hover:shadow-lg transition"
+            className="cursor-pointer text-white rounded-xl p-4 shadow-md hover:shadow-lg transition z-20"
             onClick={() => router.push(`/pokemon/${name}`)}
         >
             <div className="text-right" style={{ color: colorDarker }}>{formattedId}</div>
