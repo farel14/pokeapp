@@ -1,30 +1,29 @@
-import { typeColors, typeColorsLighter, typeColorsDarker } from "@/lib/typeColors";
-import fs from 'fs';
+'use client'
+import { typeColors, typeColorsLighter, typeColorsDarker } from "@/lib/constants";
 import PokeballIcon from "@/components/PokeballIcon";
+import { useEffect, useState } from "react";
+import { pokeApiCall } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
+const PokemonCard = ({ name }: any) => {
+    const [pokemonData, setPokemonData] = useState<any>(null);
+    const router = useRouter();
 
-type Props = {
-    name: string;
-};
+    useEffect(() => {
+        (async () => {
+            const res = await pokeApiCall(`pokemon/${name}`);
+            const data = await res.json();
+            console.log('data', data);
+            setPokemonData(data);
+        })();
+    }, [name]);
 
-const PokemonCard = async ({ name }: Props) => {
-    // // real API call
-    // const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-    // const data = await res.json();
-    // // for testing
-    // let readData = fs.readFileSync('db.json', 'utf-8');
-    // let parsedData = JSON.parse(readData);
-    // if (!parsedData.data[name]) {
-    //     parsedData.data[name] = data;
-    //     fs.writeFileSync('db.json', JSON.stringify(parsedData, null, 2));
-    // }
-    let readData = fs.readFileSync('db.json', 'utf-8');
-    let data = JSON.parse(readData).data[name];
+    if (!pokemonData) return null;
 
     // format response
-    const formattedId = `#${data.id.toString().padStart(3, "0")}`;
-    const pokemonType = data.types[0].type.name;
-    const pokemonTypeSecondary = data.types[1]?.type.name;
+    const formattedId = `#${pokemonData.id.toString().padStart(3, "0")}`;
+    const pokemonType = pokemonData.types[0].type.name;
+    const pokemonTypeSecondary = pokemonData.types[1]?.type.name;
     const color = typeColors[pokemonType] || "#fff"; // Fallback color if type is not found
     const colorLighter = typeColorsLighter[pokemonType] || "#fff"; // Fallback color if type is not found
     const colorDarker = typeColorsDarker[pokemonType] || "#fff"; // Fallback color if type is not found
@@ -32,7 +31,8 @@ const PokemonCard = async ({ name }: Props) => {
     return (
         <div
             style={{ backgroundColor: color }}
-            className="text-white rounded-xl p-4 shadow-md hover:shadow-lg transition"
+            className="cursor-pointer text-white rounded-xl p-4 shadow-md hover:shadow-lg transition"
+            onClick={() => router.push(`/pokemon/${name}`)}
         >
             <div className="text-right" style={{ color: colorDarker }}>{formattedId}</div>
             <h2 className="text-left capitalize font-semibold mt-2">{name}</h2>
@@ -44,7 +44,7 @@ const PokemonCard = async ({ name }: Props) => {
                 <div className="relative gap-2 mt-2 ">
                     <PokeballIcon className="w-40 h-40" style={{ fill: colorLighter }} />
                     <img
-                        src={data.sprites.other?.['official-artwork']?.front_default || data.sprites.front_default}
+                        src={pokemonData.sprites.other?.['official-artwork']?.front_default || pokemonData.sprites.front_default}
                         alt={name}
                         className="absolute top-0 left-0 w-full h-full object-cover rounded-xl"
                     />

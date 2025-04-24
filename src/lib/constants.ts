@@ -60,3 +60,6 @@ export const typeColorsDarker: Record<string, string> = {
     fairy: "#f09dc6",
     normal: "#8a8a6a",
 };
+
+// will be moved to env?
+export const baseUrl = 'https://pokeapi.co/api/v2/'
