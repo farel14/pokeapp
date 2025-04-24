@@ -2,11 +2,10 @@
 
 import { pokeApiCall } from "@/lib/api";
 import { Evolution, EvolutionRes } from "@/types"
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdArrowDropdownCircle } from "react-icons/io";
 
 interface DetailEvolutionModalProps {
-    name: string;
     evolutionChainId: string;
     color: {
         color: string;
@@ -15,7 +14,7 @@ interface DetailEvolutionModalProps {
     }
 }
 
-function parseChain(data: any): Evolution {
+function parseChain(data: Evolution): Evolution {
     return {
         evolves_to: data.evolves_to.map(parseChain),
         species: {
@@ -53,7 +52,7 @@ const EvolutionNodeComponent: React.FC<{ node: Evolution, color: DetailEvolution
     );
 };
 
-const DetailEvolutionModal = ({ name, evolutionChainId, color }: DetailEvolutionModalProps) => {
+const DetailEvolutionModal = ({ evolutionChainId, color }: DetailEvolutionModalProps) => {
     const [evoChain, setEvoChain] = useState<Evolution | null>(null);
 
     useEffect(() => {

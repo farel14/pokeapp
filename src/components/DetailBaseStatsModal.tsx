@@ -1,6 +1,6 @@
 'use client'
 
-import { General, Props } from "@/types"
+import { General } from "@/types"
 import { useEffect, useState } from "react";
 
 interface DetailBaseStatsModalProps {
@@ -8,7 +8,7 @@ interface DetailBaseStatsModalProps {
     name: string;
 } // Explicitly defining the properties
 
-const DetailBaseStatsModal = ({ name, stats }: DetailBaseStatsModalProps) => {
+const DetailBaseStatsModal = ({ stats }: DetailBaseStatsModalProps) => {
     const [stat, setStat] = useState<Record<string, number>>({
         hp: 0,
         attack: 0,
@@ -100,7 +100,7 @@ const DetailBaseStatsModal = ({ name, stats }: DetailBaseStatsModalProps) => {
 
                 <div className="flex flex-col gap-2 text-black w-full">
                     {
-                        Object.entries(stat).map(([key, value]) => (
+                        Object.keys(stat).map((key) => (
                             <div key={key} className={`flex flex-col w-full gap-2 w-100 bg-gray-200 rounded-full h-full my-2`}>
                                 <div className={`${statColor[key]} h-full rounded-full`} style={{ width: `${Math.floor(statPercent[key]) > 100 ? 100 : Math.floor(statPercent[key])}%` }} />
                             </div>

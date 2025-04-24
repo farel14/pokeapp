@@ -1,5 +1,4 @@
-import { pokeApiCall } from '@/lib/api';
-import { General, Props } from '@/types';
+import { General } from '@/types';
 import { useEffect, useState } from 'react';
 
 const TYPE_EFFECTIVENESS: Record<string, Record<string, number>> = {
@@ -40,12 +39,10 @@ function getDefensiveMultipliers(types: string[]) {
 }
 
 export default function DetailTypeModal({ name, generalData }: {name:string, generalData:General}) {
-  const [defenseData, setDefenseData] = useState(null);
+  const [defenseData, setDefenseData] = useState<Record<string, number> | null>(null);
 
   useEffect(() => {
     async function fetchData() {
-      // const res = await pokeApiCall(`pokemon/${name}`);
-      // const data = await res.json();
       const types = generalData.types.map(t => t.type.name);
       const multipliers = getDefensiveMultipliers(types);
 

@@ -61,7 +61,7 @@ const HomePage = () => {
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
         >
           {pokemons && pokemons.map((pokemon) => (
-            <PokemonCard className="" key={pokemon.name} name={pokemon.name} />
+            <PokemonCard key={pokemon.name} name={pokemon.name} />
           ))}
         </InfiniteScroll>
 

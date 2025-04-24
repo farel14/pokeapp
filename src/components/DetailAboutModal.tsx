@@ -3,7 +3,7 @@ import { pokeApiCall } from "@/lib/api";
 import { mmToFeetDecimalInches } from "@/lib/utils";
 import { EggGroup, General, Species } from "@/types";
 import convert from "convert-units";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { MdFemale, MdMale } from "react-icons/md";
 
 type DetailAboutModalProps = {
@@ -12,7 +12,6 @@ type DetailAboutModalProps = {
 }
 
 const DetailAboutModal = ({ generalData, speciesData }: DetailAboutModalProps) => {
-    if (!generalData || !speciesData) return null;
     const {
         abilities: pokemonAbilities,
         weight: pokemonWeight,
@@ -62,7 +61,7 @@ const DetailAboutModal = ({ generalData, speciesData }: DetailAboutModalProps) =
     // let data = JSON.parse(readData).data[name];
     // format response
 
-    const abilities = pokemonAbilities?.map((ability: any) => ability.ability.name).join(", ");
+    const abilities = pokemonAbilities?.map((ability) => ability.ability.name).join(", ");
     const formattedWeight = `${convert(pokemonWeight / 10).from('kg').to('lb').toFixed(1)} lbs (${convert(pokemonWeight / 10).from('kg').to('kg').toFixed(1)} kg)`;
     const formattedHeight = `${mmToFeetDecimalInches(pokemonHeight * 100, 1)} (${convert(pokemonHeight).from('mm').to('cm').toFixed(2)} m)`;
     const isGenderless = pokemonGenderRate === -1;
@@ -70,11 +69,12 @@ const DetailAboutModal = ({ generalData, speciesData }: DetailAboutModalProps) =
     const malePercentage = pokemonGenderRate === -1 ? 0 : 100 - femalePercentage;
 
     // Seed Pokémon
-    const speciesPokemon = pokemonGenera?.find((genera: any) => genera.language.name === "en")?.genus || "Unknown";
+    const speciesPokemon = pokemonGenera?.find((genera) => genera.language.name === "en")?.genus || "Unknown";
 
     // remove Pokémon from speciesPokemon
     const species = (speciesPokemon.replace("Pokémon", "").trim());
 
+    if (!generalData || !speciesData) return null;
 
     return (
         <div>

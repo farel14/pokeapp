@@ -7,7 +7,7 @@ import { General, GeneralSprites, Species } from "@/types";
 import BackgroundIcon from "@/components/BackgroundIcon";
 import { pokeApiCall } from "@/lib/api";
 import DetailBaseStatsModal from "@/components/DetailBaseStatsModal";
-import { use, useEffect, useRef, useState } from "react";
+import { use, useEffect, useState } from "react";
 import DetailAboutModal from "@/components/DetailAboutModal";
 import { useRouter } from "next/navigation";
 import DetailEvolutionModal from "@/components/DetailEvolutionModal";
@@ -100,7 +100,7 @@ const PokemonPage = ({ params }: { params: Promise<{ name: string }> }) => {
           </div>
         );
       case 'evolution':
-        return <DetailEvolutionModal name={name} evolutionChainId={evolutionChainId as string} color={{color, colorDarker, colorLighter}} />;
+        return <DetailEvolutionModal evolutionChainId={evolutionChainId as string} color={{color, colorDarker, colorLighter}} />;
       case 'moves':
         return <DetailMovesModal name={name} generalData={generalData} />;
       default:
